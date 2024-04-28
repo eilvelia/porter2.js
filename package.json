@@ -1,7 +1,7 @@
 {
   "name": "porter2",
-  "version": "0.1.0",
-  "description": "Fast porter2 stemmer JavaScript implementation",
+  "version": "1.0.0",
+  "description": "Fastest JavaScript implementation of the porter2 stemmer",
   "main": "dist/index.js",
   "types": "index.d.ts",
   "scripts": {

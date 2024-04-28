@@ -76,7 +76,7 @@ but comparable results.
 
 [^1]: 99.97% porter2 compliant (fails on `'` cases only)
 
-[^2]: that one has similar goals and surprisingly was published just 3 days
+[^2]: That one has similar goals and, surprisingly, was published just 3 days
 before this package was released! (And after I started working on it.)
 
 [^3]: ESM only
