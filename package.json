@@ -1,0 +1,45 @@
+{
+  "name": "porter2",
+  "version": "0.1.0",
+  "description": "Fast porter2 stemmer JavaScript implementation",
+  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "node preprocess.js",
+    "test": "node test/run.mjs",
+    "lint": "tsc",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "stemmer",
+    "english",
+    "porter",
+    "porter2",
+    "stemming",
+    "snowball"
+  ],
+  "devDependencies": {
+    "porter-stemmer": "^0.9.1",
+    "porter-stemmer-js": "^1.1.0",
+    "stemmer": "^2.0.1",
+    "stemr": "^1.0.0",
+    "typescript": "^5.4.5",
+    "wink-porter2-stemmer": "^2.0.1"
+  },
+  "author": "https://github.com/Bannerets",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bannerets/porter2.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bannerets/porter2.js/issues"
+  },
+  "homepage": "https://github.com/Bannerets/porter2.js#readme",
+  "license": "MIT"
+}

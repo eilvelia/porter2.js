@@ -1,0 +1,2 @@
+dist/*.js linguist-generated=true
+*.flow linguist-language=JavaScript
