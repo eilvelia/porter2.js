@@ -1,6 +1,6 @@
 {
   "name": "porter2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fastest JavaScript implementation of the porter2 stemmer",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -22,11 +22,12 @@
     "porter",
     "porter2",
     "stemming",
+    "algorithm",
     "snowball"
   ],
   "devDependencies": {
     "porter-stemmer": "^0.9.1",
-    "porter-stemmer-js": "^1.1.0",
+    "porter-stemmer-js": "^1.1.1",
     "stemmer": "^2.0.1",
     "stemr": "^1.0.0",
     "typescript": "^5.4.5",

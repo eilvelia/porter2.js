@@ -1,2 +1,3 @@
 dist/*.js linguist-generated=true
+bench/bench-set.js linguist-generated=true
 *.flow linguist-language=JavaScript
