@@ -1,6 +1,6 @@
 {
   "name": "porter2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Fastest JavaScript implementation of the porter2 stemmer",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -33,14 +33,14 @@
     "typescript": "^5.4.5",
     "wink-porter2-stemmer": "^2.0.1"
   },
-  "author": "https://github.com/Bannerets",
+  "author": "eilvelia <hi@eilvelia.cat>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bannerets/porter2.js.git"
+    "url": "git+https://github.com/eilvelia/porter2.js.git"
   },
   "bugs": {
-    "url": "https://github.com/Bannerets/porter2.js/issues"
+    "url": "https://github.com/eilvelia/porter2.js/issues"
   },
-  "homepage": "https://github.com/Bannerets/porter2.js#readme",
+  "homepage": "https://github.com/eilvelia/porter2.js#readme",
   "license": "MIT"
 }

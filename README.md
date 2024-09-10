@@ -1,4 +1,4 @@
-# porter2 &nbsp; [![npm](https://img.shields.io/npm/v/porter2.svg)](https://www.npmjs.com/package/porter2) [![CI](https://github.com/Bannerets/porter2.js/actions/workflows/ci.yml/badge.svg)](https://github.com/Bannerets/porter2.js/actions/workflows/ci.yml)
+# porter2 &nbsp; [![npm](https://img.shields.io/npm/v/porter2.svg)](https://www.npmjs.com/package/porter2) [![CI](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml/badge.svg)](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml)
 
 Fast JavaScript implementation of the [porter2] English [stemming] algorithm.
 
@@ -74,7 +74,7 @@ The benchmark code is in `bench/run.mjs`.
 This is tested with Node.js v20.12.2 and bun v1.1.4. The library versions are
 latest as of 2024-04-29.
 
-[^1]: 99.97% porter2 compliant (fails on `'` cases only)
+[^1]: `wink-porter2-stemmer` is 99.97% porter2 compliant (fails on `'` cases only)
 
 [^2]: That one has similar goals and, surprisingly, was published just 3 days
 before this package was released! (And after I started working on porter2.js.)
