@@ -4,51 +4,27 @@ Object.defineProperty(exports, '__esModule', { value: true })
 
 // EQ_BEGIN : (chars : string) -> <code (boolean)>
 // EQ_END : (offset : number, chars : string) -> <code (boolean)>
-// All one-character strings in this file are converted to char codes.
+// BYTE_SET : (chars : string) -> <code (Uint8Array of length 128)>
+// All one-character strings in this file are converted to numeric char codes.
 
-// This is mostly a rewrite of my ocaml implementation (though not published
-// at the moment of writing this)
+// eilvelia: This is mostly a rewrite of my ocaml implementation (though not published
+// at the moment of writing this). The implementation was partially based on
+// https://github.com/vk-com/kphp-kdb/blob/ce6dead5b3345f4b38487cc9e45d55ced3dd7139/common/stemmer-new.c
 
-function is_v(char) {
-  switch (char) {
-    case 97: case 101: case 105: case 111: case 117: case 121: return true
-    default: return false
-  }
-}
+var IS_V = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0])
+var IS_WXY = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0])
+var IS_VALID_LI = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,1,0,1,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0])
+var IS_DOUBLE = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0])
 
-function is_wxy(char) {
-  switch (char) {
-    case 97: case 101: case 105: case 111: case 117: case 121:
-    case 119: case 120: case 89:
-      return true
-    default: return false
-  }
-}
-
-function is_valid_li(char) {
-  switch (char) {
-    case 99: case 100: case 101: case 103: case 104: case 107: case 109:
-    case 110: case 114: case 116:
-      return true
-    default: return false
-  }
-}
-
-function is_double(char) {
-  switch (char) {
-    case 98: case 100: case 102: case 103: case 109: case 110: case 112:
-    case 114: case 116:
-      return true
-    default: return false
-  }
-}
+// Reusable buffer for small words
+var WBUF = new Uint16Array(128)
 
 function is_shortv(w, len) {
   // backwardmode: ( non-v_WXY v non-v ) or ( non-v v atlimit )
-  return len >= 2 && is_v(w[len - 2]) && (
-    (len === 2 && !is_v(w[len - 1]))
-    || (len >= 3 && !is_v(w[len - 3])
-        && !is_wxy(w[len - 1]))
+  return len >= 2 && IS_V[Math.min(w[len - 2], 127)] && (
+    (len === 2 && !IS_V[Math.min(w[len - 1], 127)])
+    || (len >= 3 && !IS_V[Math.min(w[len - 3], 127)]
+        && !IS_WXY[Math.min(w[len - 1], 127)])
   )
 }
 
@@ -79,13 +55,13 @@ exports.stem = function stem(word) {
   }
   var initial_offset = word.charCodeAt(0) === 39 /* ' */ ? 1 : 0
   var l = word.length - initial_offset
-  var w = new Array(l)
-  var y_found = false
+  var w = l < WBUF.length ? WBUF : new Uint16Array(l + 1)
+  var mutated = false
   for (var i = 0; i < l; ++i) {
     // var ch = word[i + initial_offset]
     var ch = word.charCodeAt(i + initial_offset)
-    if (ch === 121 && (i === 0 || is_v(w[i - 1]))) {
-      y_found = true
+    if (ch === 121 && (i === 0 || IS_V[Math.min(w[i - 1], 127)])) {
+      // Y is a special mark so it isn't treated as a vowel
       w[i] = 89
       continue
     }
@@ -98,7 +74,7 @@ exports.stem = function stem(word) {
   // mark_regions
   var rv = 0;
   // rv is the position after the first vowel
-  while (rv < l && !is_v(w[rv])) ++rv
+  while (rv < l && !IS_V[Math.min(w[rv], 127)]) ++rv
   if (rv < l) ++rv
   var r1 = rv
   if (l >= 5 && ((w[0] === 103 && w[1] === 101 && w[2] === 110 && w[3] === 101 && w[4] === 114) || (w[0] === 97 && w[1] === 114 && w[2] === 115 && w[3] === 101 && w[4] === 110)))
@@ -108,14 +84,14 @@ exports.stem = function stem(word) {
   else {
     // > R1 is the region after the first non-vowel following a vowel,
     // > or the end of the word if there is no such non-vowel.
-    while (r1 < l && is_v(w[r1])) ++r1
+    while (r1 < l && IS_V[Math.min(w[r1], 127)]) ++r1
     if (r1 < l) ++r1
   }
   // > R2 is the region after the first non-vowel following a vowel in R1,
   // > or the end of the word if there is no such non-vowel.
   var r2 = r1
-  while (r2 < l && !is_v(w[r2])) ++r2
-  while (r2 < l && is_v(w[r2])) ++r2
+  while (r2 < l && !IS_V[Math.min(w[r2], 127)]) ++r2
+  while (r2 < l && IS_V[Math.min(w[r2], 127)]) ++r2
   if (r2 < l) ++r2
   // Step_1a
   if (l >= 3) {
@@ -165,13 +141,13 @@ exports.stem = function stem(word) {
         if (l >= 2) {
           if ((w[l - 1] === 116 && w[l - 2] === 97) || (w[l - 1] === 108 && w[l - 2] === 98) || (w[l - 1] === 122 && w[l - 2] === 105)) {
             // at -> ate   bl -> ble   iz -> ize
-            w[l] = 101
+            w[l] = (mutated = true, 101)
             ++l
-          } else if (w[l - 2] === w[l - 1] && is_double(w[l - 1])) {
+          } else if (w[l - 2] === w[l - 1] && IS_DOUBLE[Math.min(w[l - 1], 127)]) {
             --l
           } else if (r1 >= l && is_shortv(w, l)) {
             // <shortv> -> e
-            w[l] = 101
+            w[l] = (mutated = true, 101)
             ++l
           }
         }
@@ -180,8 +156,8 @@ exports.stem = function stem(word) {
   }
   // Step_1c
   if (l >= 3 && (w[l - 1] === 89 || w[l - 1] === 121)
-      && !is_v(w[l - 2]))
-    w[l - 1] = 105
+      && !IS_V[Math.min(w[l - 2], 127)])
+    w[l - 1] = (mutated = true, 105)
   // Step_2
   if (l >= r1 + 2) {
     switch (w[l - 1]) {
@@ -191,7 +167,7 @@ exports.stem = function stem(word) {
             if (l >= r1 + 7) {
               // ational -> ate
               l -= 4
-              w[l - 1] = 101
+              w[l - 1] = (mutated = true, 101)
             }
           } else {
             l -= 2 // tional -> tion
@@ -204,12 +180,12 @@ exports.stem = function stem(word) {
             if (l >= r1 + 7) {
               // ization -> ize
               l -= 4
-              w[l - 1] = 101
+              w[l - 1] = (mutated = true, 101)
             }
           } else {
             // ation -> ate
             l -= 2
-            w[l - 1] = 101
+            w[l - 1] = (mutated = true, 101)
           }
         }
         break
@@ -221,7 +197,7 @@ exports.stem = function stem(word) {
           } else if (w[l - 2] === 111) {
             if (w[l - 3] === 116 && w[l - 4] === 97) {
               --l
-              w[l - 1] = 101
+              w[l - 1] = (mutated = true, 101)
             }
           }
         }
@@ -241,7 +217,7 @@ exports.stem = function stem(word) {
         if (w[l - 2] === 99) {
           if (l >= r1 + 4 && (w[l - 4] === 101 || w[l - 4] === 97)
             && w[l - 3] === 110) {
-            w[l - 1] = 101 // enci -> ence   anci -> ance
+            w[l - 1] = (mutated = true, 101) // enci -> ence   anci -> ance
           }
         } else if (w[l - 2] === 103) {
           if (l >= r1 + 3 && l >= 4 && w[l - 2] === 103 && w[l - 3] === 111 && w[l - 4] === 108)
@@ -253,8 +229,8 @@ exports.stem = function stem(word) {
                 if (l >= r1 + 6) {
                   // biliti -> ble
                   l -= 3
-                  w[l - 2] = 108
-                  w[l - 1] = 101
+                  w[l - 2] = (mutated = true, 108)
+                  w[l - 1] = (mutated = true, 101)
                 }
               } else if (w[l - 4] === 108 && w[l - 5] === 97) {
                 l -= 3 // aliti -> al
@@ -262,16 +238,16 @@ exports.stem = function stem(word) {
             } else if (w[l - 4] === 118 && w[l - 5] === 105) {
               // iviti -> ive
               l -= 2
-              w[l - 1] = 101
+              w[l - 1] = (mutated = true, 101)
             }
           }
         } else if (w[l - 2] === 108 && l >= 3) {
           if (w[l - 3] === 98) {
             if (l >= 4 && w[l - 4] === 97) {
               if (l >= r1 + 4)
-                w[l - 1] = 101 // abli -> able
+                w[l - 1] = (mutated = true, 101) // abli -> able
             } else if (l >= r1 + 3) {
-              w[l - 1] = 101 // bli -> ble
+              w[l - 1] = (mutated = true, 101) // bli -> ble
             }
           } else {
             // Remove li
@@ -291,7 +267,7 @@ exports.stem = function stem(word) {
             } else if (l >= 5 && w[l - 3] === 116 && w[l - 4] === 110 && w[l - 5] === 101) {
               if (l >= r1 + 5)
                 l -= 2 // entli -> ent
-            } else if (is_valid_li(w[l - 3])) {
+            } else if (IS_VALID_LI[Math.min(w[l - 3], 127)]) {
               l -= 2
             }
           }
@@ -314,7 +290,7 @@ exports.stem = function stem(word) {
               if (l >= r1 + 7) {
                 // ational -> ate
                 l -= 4
-                w[l - 1] = 101
+                w[l - 1] = (mutated = true, 101)
               }
             } else {
               l -= 2 // tional -> tion
@@ -417,15 +393,10 @@ exports.stem = function stem(word) {
     || w[l - 1] === 101 && (l >= r2 + 1 || !is_shortv(w, l - 1)))
   )
     --l
+  if (!mutated)
+    return word.slice(initial_offset, initial_offset + l)
   var out = ''
-  if (y_found) {
-    for (var i = 0; i < l; ++i) {
-      out += String.fromCharCode(w[i] === 89 ? 121 : w[i])
-    }
-  } else {
-    for (var i = 0; i < l; ++i)
-      // out += w[i]
-      out += String.fromCharCode(w[i])
-  }
+  for (var i = 0; i < l; ++i)
+    out += String.fromCharCode(w[i] === 89 ? 121 : w[i])
   return out
 }

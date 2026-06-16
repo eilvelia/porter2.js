@@ -35,18 +35,18 @@ console.log(word) //=> animadvers
 
 This stemmer expects a lowercase English word.
 
-The code is compatible with ES5. TypeScript type declarations are included.
+TypeScript type declarations are included.
 
 ## Benchmarks
 
 Here is a comparison with some other libraries benchmarked over the 29.4k test suite in a
 hot loop (you probably should take it with a little grain of salt):
 
-| library                              | throughput (node) | throughput (bun) | slower |
-| ------------------------------------ | ----------------- | ---------------- | ------ |
-| porter2 1.1.0                        | 5338 kops/s       | 7119 kops/s      | 1.00×  |
-| [stemr][] 1.0.0                      | 931 kops/s        | 1206 kops/s      | 5.74×  |
-| [wink-porter2-stemmer][] [^1] 2.0.1  | 325 kops/s        | 408 kops/s       | 16×    |
+| library                              | throughput (node) | throughput (bun) | slower  |
+| ------------------------------------ | ----------------- | ---------------- | ------- |
+| porter2 2.0.0                        | 11157 kops/s      | 11092 kops/s     | 1.000×  |
+| [stemr][] 1.0.0                      | 958 kops/s        | 1194 kops/s      | 11.641× |
+| [wink-porter2-stemmer][] [^1] 2.0.1  | 325 kops/s        | 407 kops/s       | 34.319× |
 
 [stemr]: https://github.com/localvoid/stemr
 [wink-porter2-stemmer]: https://github.com/winkjs/wink-porter2-stemmer
@@ -54,12 +54,12 @@ hot loop (you probably should take it with a little grain of salt):
 Here are libraries that implement the older porter version 1 (note the behavior is
 not identical):
 
-| library                              | throughput (node) | throughput (bun) | slower |
-| ------------------------------------ | ----------------- | ---------------- | ------ |
-| [porter-stemmer-js][] [^2] 1.1.2     | 3166 kops/s       | 3588 kops/s      | 1.69×  |
-| [stemmer][] [^3] 2.0.1               | 2036 kops/s       | 1819 kops/s      | 2.62×  |
-| [@stdlib/nlp-porter-stemmer][] 0.2.3 | 1664 kops/s       | 1537 kops/s      | 3.21×  |
-| [porter-stemmer][] 0.9.1             | 901 kops/s        | 1214 kops/s      | 5.92×  |
+| library                              | throughput (node) | throughput (bun) | slower  |
+| ------------------------------------ | ----------------- | ---------------- | ------- |
+| [porter-stemmer-js][] [^2] 1.1.2     | 3081 kops/s       | 3583 kops/s      | 3.621×  |
+| [stemmer][] [^3] 2.0.1               | 2030 kops/s       | 1789 kops/s      | 5.496×  |
+| [@stdlib/nlp-porter-stemmer][] 0.2.3 | 1588 kops/s       | 1523 kops/s      | 7.024×  |
+| [porter-stemmer][] 0.9.1             | 902 kops/s        | 1245 kops/s      | 12.373× |
 
 [porter-stemmer-js]: https://github.com/evi1Husky/PorterStemmer
 [stemmer]: https://github.com/words/stemmer
