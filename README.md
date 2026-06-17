@@ -1,4 +1,4 @@
-# porter2 &nbsp; [![npm](https://img.shields.io/npm/v/porter2.svg)](https://www.npmjs.com/package/porter2) [![CI](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml/badge.svg)](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml)
+# porter2 &nbsp; [![npm](https://img.shields.io/npm/v/porter2.svg)](https://www.npmjs.com/package/porter2) [![CI](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml/badge.svg)](https://github.com/eilvelia/porter2.js/actions/workflows/ci.yml) ![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
 
 Very fast JavaScript implementation of the [porter2] English [stemming] algorithm.
 
