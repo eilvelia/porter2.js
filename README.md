@@ -48,9 +48,6 @@ hot loop (you probably should take it with a little grain of salt):
 | [stemr][] 1.0.0                      | 958 kops/s        | 1194 kops/s      | 11.641× |
 | [wink-porter2-stemmer][] [^1] 2.0.1  | 325 kops/s        | 407 kops/s       | 34.319× |
 
-[stemr]: https://github.com/localvoid/stemr
-[wink-porter2-stemmer]: https://github.com/winkjs/wink-porter2-stemmer
-
 Here are libraries that implement the older porter version 1 (note the behavior is
 not identical):
 
@@ -61,14 +58,16 @@ not identical):
 | [@stdlib/nlp-porter-stemmer][] 0.2.3 | 1588 kops/s       | 1523 kops/s      | 7.024×  |
 | [porter-stemmer][] 0.9.1             | 902 kops/s        | 1245 kops/s      | 12.373× |
 
+The benchmark code is in [bench/run.mjs](bench/run.mjs) ([bench/all.mjs](bench/all.mjs)
+for all libraries). This was tested with Node.js v24.15.0 and bun v1.3.13 on Zen 3 (4.5
+GHz boosted).
+
+[stemr]: https://github.com/localvoid/stemr
+[wink-porter2-stemmer]: https://github.com/winkjs/wink-porter2-stemmer
 [porter-stemmer-js]: https://github.com/evi1Husky/PorterStemmer
 [stemmer]: https://github.com/words/stemmer
 [@stdlib/nlp-porter-stemmer]: https://github.com/stdlib-js/nlp-porter-stemmer
 [porter-stemmer]: https://github.com/jedp/porter-stemmer
-
-The benchmark code is in [bench/run.mjs](bench/run.mjs) ([bench/all.mjs](bench/all.mjs)
-for all libraries). This was tested with Node.js v24.15.0 and bun v1.3.13 on Zen 3 (4.5
-GHz boosted).
 
 [^1]: `wink-porter2-stemmer` is 99.97% porter2 compliant (fails on `'` cases only)
 

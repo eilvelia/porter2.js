@@ -1,5 +1,5 @@
 /**
- * Porter2 English stemmer. Works on lowercase text only.
+ * Porter2 English stemmer. Works on lowercase words only.
  *
  * @example
  * ```
