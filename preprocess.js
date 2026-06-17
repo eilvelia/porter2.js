@@ -2,6 +2,7 @@
 
 const path = require('node:path')
 const fs = require('node:fs')
+const assert = require('node:assert').strict
 
 const source = fs.readFileSync(path.join(__dirname, 'src', 'index.js'))
   .toString()
@@ -12,6 +13,7 @@ const output = header + source
   .replace(/BYTE_SET\('(\w+)'\)/g, (_, chars) => {
     const arr = new Array(128).fill(0)
     for (const ch of chars) arr[ch.charCodeAt(0)] = 1
+    assert(arr.length === 128)
     return `new Uint8Array([${arr.join(',')}])`
   })
   .replace(/EQ_BEGIN\('(\w+)'\)/g, (_, str) => {
